@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In - ShopCloud</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+  <style>
+    .auth-page {
+      min-height: calc(100vh - 120px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      flex: 1;
+    }
+    .auth-box {
+      background: white;
+      border-radius: 8px;
+      padding: 32px 36px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    .auth-logo {
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: #131921;
+      margin-bottom: 6px;
+    }
+    .auth-logo span { color: #ff9900; }
+    .auth-tagline {
+      text-align: center;
+      font-size: 13px;
+      color: #565959;
+      margin-bottom: 24px;
+    }
+    .auth-tabs {
+      display: flex;
+      border-bottom: 2px solid #eee;
+      margin-bottom: 24px;
+    }
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #565959;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+    .auth-tab.active {
+      color: #ff9900;
+      border-bottom-color: #ff9900;
+    }
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #0f1111;
+      margin-bottom: 5px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .form-group input:focus {
+      border-color: #ff9900;
+      box-shadow: 0 0 0 2px rgba(255,153,0,0.2);
+    }
+    .auth-btn {
+      background: #ff9900;
+      color: #131921;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    .auth-btn:hover { background: #e68900; }
+    .auth-btn:disabled { background: #ccc; cursor: not-allowed; }
+    .divider {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      margin: 16px 0;
+      position: relative;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 42%;
+      height: 1px;
+      background: #eee;
+    }
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+    .message-box {
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      display: none;
+      line-height: 1.5;
+    }
+    .message-box.error { background: #fef0f0; color: #cc0000; border: 1px solid #ffcccc; display: block; }
+    .message-box.success { background: #f0fef4; color: #006600; border: 1px solid #99ddaa; display: block; }
+    .message-box.info { background: #fffbf0; color: #996600; border: 1px solid #ffdd99; display: block; }
+    .verify-section { display: none; }
+    .verify-section.show { display: block; }
+    .password-wrapper { position: relative; }
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 16px;
+      color: #888;
+    }
+    .terms {
+      font-size: 11px;
+      color: #888;
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+    .forgot-link {
+      text-align: right;
+      margin-top: -8px;
+      margin-bottom: 12px;
+    }
+    .forgot-link a {
+      font-size: 12px;
+      color: #007185;
+      text-decoration: none;
+    }
+    .forgot-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="index.html" class="logo">🛒 ShopCloud</a>
+      
+    </div>
+  </div>
+
+  <!-- AUTH PAGE -->
+  <div class="auth-page">
+    <div class="auth-box">
+
+      <div class="auth-logo">🛒 <span>ShopCloud</span></div>
+      <div class="auth-tagline">India's favourite online shopping destination</div>
+
+      <!-- TABS -->
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</div>
+        <div class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</div>
+      </div>
+
+      <!-- SIGN IN FORM -->
+      <div class="auth-form active" id="form-signin">
+        <div class="message-box" id="signin-message"></div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="signin-email" placeholder="Enter your email"/>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="signin-password" placeholder="Enter your password"/>
+            <span class="toggle-password" onclick="togglePassword('signin-password')">👁️</span>
+          </div>
+        </div>
+        <div class="forgot-link"><a href="#" onclick="showForgotPassword()">Forgot password?</a></div>
+        <button class="auth-btn" id="signin-btn" onclick="signIn()">Sign In</button>
+        <div class="terms">By signing in, you agree to ShopCloud's Conditions of Use and Privacy Notice.</div>
+      </div>
+
+      <!-- SIGN UP FORM -->
+      <div class="auth-form" id="form-signup">
+        <div class="message-box" id="signup-message"></div>
+
+        <!-- REGISTRATION -->
+        <div id="signup-fields">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="signup-name" placeholder="Enter your full name"/>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="signup-email" placeholder="Enter your email"/>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="signup-password" placeholder="Min 8 characters"/>
+              <span class="toggle-password" onclick="togglePassword('signup-password')">👁️</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" id="signup-confirm" placeholder="Re-enter your password"/>
+          </div>
+          <button class="auth-btn" id="signup-btn" onclick="signUp()">Create Account</button>
+          <div class="terms">By creating an account, you agree to ShopCloud's Conditions of Use and Privacy Notice.</div>
+        </div>
+
+        <!-- VERIFICATION -->
+        <div class="verify-section" id="verify-section">
+          <div style="text-align:center;margin-bottom:16px">
+            <div style="font-size:40px;margin-bottom:8px">📧</div>
+            <h3 style="font-size:16px;color:#0f1111;margin-bottom:6px">Verify your email</h3>
+            <p style="font-size:13px;color:#565959">We sent a 6-digit code to <strong id="verify-email-display"></strong></p>
+          </div>
+          <div class="form-group">
+            <label>Verification Code</label>
+            <input type="text" id="verify-code" placeholder="Enter 6-digit code" maxlength="6" style="text-align:center;font-size:20px;letter-spacing:8px"/>
+          </div>
+          <button class="auth-btn" onclick="verifyCode()">Verify Email</button>
+          <div style="text-align:center;margin-top:12px">
+            <a href="#" onclick="resendCode()" style="font-size:13px;color:#007185;text-decoration:none">Resend code</a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-bottom">
+      <p>🛒 ShopCloud &copy; 2026 &nbsp;|&nbsp; Built on AWS &nbsp;|&nbsp; All rights reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    // ===== COGNITO CONFIG =====
+    const POOL_DATA = {
+      UserPoolId: 'ap-south-1_zWnAt9zu0',
+      ClientId: '795g14phrivadirpbnoefu8j9c'
+    };
+
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool(POOL_DATA);
+    let currentSignupEmail = '';
+
+    // ===== CART COUNT =====
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      document.getElementById('cart-count').textContent = cart.length;
+    }
+
+    // ===== TAB SWITCH =====
+    function switchTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+      document.getElementById('form-' + tab).classList.add('active');
+    }
+
+    // ===== SHOW MESSAGE =====
+    function showMessage(id, type, text) {
+      const el = document.getElementById(id);
+      el.className = 'message-box ' + type;
+      el.textContent = text;
+    }
+
+    // ===== TOGGLE PASSWORD =====
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    // ===== SIGN UP =====
+    function signUp() {
+      const name = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const confirm = document.getElementById('signup-confirm').value;
+
+      if (!name || !email || !password || !confirm) {
+        showMessage('signup-message', 'error', 'Please fill in all fields.');
+        return;
+      }
+      if (password !== confirm) {
+        showMessage('signup-message', 'error', 'Passwords do not match.');
+        return;
+      }
+      if (password.length < 8) {
+        showMessage('signup-message', 'error', 'Password must be at least 8 characters.');
+        return;
+      }
+
+      const btn = document.getElementById('signup-btn');
+      btn.disabled = true;
+      btn.textContent = 'Creating account...';
+
+      const attributeList = [
+        new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'name', Value: name }),
+        new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'email', Value: email })
+      ];
+
+      userPool.signUp(email, password, attributeList, null, (err, result) => {
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+
+        if (err) {
+          showMessage('signup-message', 'error', err.message || 'Sign up failed. Please try again.');
+          return;
+        }
+
+        currentSignupEmail = email;
+        document.getElementById('verify-email-display').textContent = email;
+        document.getElementById('signup-fields').style.display = 'none';
+        document.getElementById('verify-section').classList.add('show');
+        showMessage('signup-message', 'success', 'Account created! Please check your email for the verification code.');
+      });
+    }
+
+    // ===== VERIFY CODE =====
+    function verifyCode() {
+      const code = document.getElementById('verify-code').value.trim();
+      if (!code || code.length !== 6) {
+        showMessage('signup-message', 'error', 'Please enter the 6-digit code from your email.');
+        return;
+      }
+
+      const cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+        Username: currentSignupEmail,
+        Pool: userPool
+      });
+
+      cognitoUser.confirmRegistration(code, true, (err, result) => {
+        if (err) {
+          showMessage('signup-message', 'error', err.message || 'Invalid code. Please try again.');
+          return;
+        }
+        showMessage('signup-message', 'success', '✅ Email verified! Redirecting to sign in...');
+        setTimeout(() => {
+          switchTab('signin');
+          document.getElementById('signin-email').value = currentSignupEmail;
+          showMessage('signin-message', 'success', 'Account verified! Please sign in.');
+        }, 1500);
+      });
+    }
+
+    // ===== RESEND CODE =====
+    function resendCode() {
+      const cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+        Username: currentSignupEmail,
+        Pool: userPool
+      });
+      cognitoUser.resendConfirmationCode((err) => {
+        if (err) {
+          showMessage('signup-message', 'error', 'Could not resend code. Please try again.');
+          return;
+        }
+        showMessage('signup-message', 'info', 'Code resent! Check your email.');
+      });
+    }
+
+    // ===== SIGN IN =====
+    function signIn() {
+      const email = document.getElementById('signin-email').value.trim();
+      const password = document.getElementById('signin-password').value;
+
+      if (!email || !password) {
+        showMessage('signin-message', 'error', 'Please enter your email and password.');
+        return;
+      }
+
+      const btn = document.getElementById('signin-btn');
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+
+      const authDetails = new AmazonCognitoIdentity.AuthenticationDetails({
+        Username: email,
+        Password: password
+      });
+
+      const cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+        Username: email,
+        Pool: userPool
+      });
+
+      cognitoUser.authenticateUser(authDetails, {
+        onSuccess: (result) => {
+          // Save token and user info
+          const token = result.getIdToken().getJwtToken();
+          const payload = result.getIdToken().decodePayload();
+          localStorage.setItem('shopcloud_token', token);
+          localStorage.setItem('shopcloud_user', JSON.stringify({
+            name: payload.name || email,
+            email: payload.email
+          }));
+          showMessage('signin-message', 'success', '✅ Signed in successfully! Redirecting...');
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1000);
+        },
+        onFailure: (err) => {
+          btn.disabled = false;
+          btn.textContent = 'Sign In';
+          if (err.code === 'UserNotConfirmedException') {
+            showMessage('signin-message', 'error', 'Please verify your email first. Check your inbox for the code.');
+          } else if (err.code === 'NotAuthorizedException') {
+            showMessage('signin-message', 'error', 'Incorrect email or password. Please try again.');
+          } else {
+            showMessage('signin-message', 'error', err.message || 'Sign in failed. Please try again.');
+          }
+        }
+      });
+    }
+
+    // ===== FORGOT PASSWORD =====
+    function showForgotPassword() {
+      const email = document.getElementById('signin-email').value.trim();
+      if (!email) {
+        showMessage('signin-message', 'info', 'Enter your email above first, then click Forgot password.');
+        return;
+      }
+      const cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+        Username: email,
+        Pool: userPool
+      });
+      cognitoUser.forgotPassword({
+        onSuccess: () => {
+          showMessage('signin-message', 'success', 'Password reset code sent to your email!');
+        },
+        onFailure: (err) => {
+          showMessage('signin-message', 'error', err.message || 'Could not send reset code.');
+        }
+      });
+    }
+
+    // Check if already logged in
+    // Only redirect if coming from a direct login attempt
+    const existingUser = userPool.getCurrentUser();
+    if (existingUser && !document.referrer.includes('login.html')) {
+    existingUser.getSession((err, session) => {
+        if (!err && session.isValid()) {
+        window.location.href = 'index.html';
+        }
+    });
+    }
+
+    updateCartCount();
+  </script>
+
+</body>
+</html>

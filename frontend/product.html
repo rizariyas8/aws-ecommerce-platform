@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product - ShopCloud</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .product-page {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      flex: 1;
+    }
+    .product-image-box {
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .product-image-box img {
+      width: 100%;
+      max-width: 340px;
+      border-radius: 8px;
+    }
+    .product-info {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .product-info .brand {
+      font-size: 13px;
+      color: #007185;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .product-info h1 {
+      font-size: 24px;
+      color: #0f1111;
+      line-height: 1.3;
+    }
+    .product-info .rating {
+      font-size: 14px;
+      color: #ff9900;
+    }
+    .product-info .price-section {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .product-info .price { font-size: 28px; font-weight: bold; }
+    .product-info .original-price { font-size: 15px; }
+    .product-info .discount { font-size: 15px; }
+    .product-info .delivery {
+      font-size: 14px;
+      color: #007600;
+      font-weight: 500;
+    }
+    .product-info .stock {
+      font-size: 18px;
+      color: #007600;
+      font-weight: 600;
+    }
+    .add-btn {
+      background: #ff9900;
+      color: #131921;
+      border: none;
+      padding: 14px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    .add-btn:hover { background: #e68900; }
+    .buy-btn {
+      background: #ff6600;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    .buy-btn:hover { background: #e65c00; }
+    .features {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .features h3 {
+      font-size: 15px;
+      margin-bottom: 10px;
+      color: #0f1111;
+    }
+    .features ul {
+      list-style: none;
+      padding: 0;
+    }
+    .features ul li {
+      font-size: 13px;
+      color: #444;
+      padding: 4px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .features ul li::before {
+      content: "✔ ";
+      color: #007600;
+      font-weight: bold;
+    }
+    .breadcrumb {
+      max-width: 1100px;
+      margin: 16px auto 0;
+      padding: 0 20px;
+      font-size: 13px;
+      color: #565959;
+    }
+    .breadcrumb a { color: #007185; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; color: #c45500; }
+    @media (max-width: 768px) {
+      .product-page { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="index.html" class="logo">🛒 ShopCloud</a>
+      <div class="search-bar">
+        <input type="text" placeholder="Search for products, brands and more..."/>
+        <button class="search-btn">🔍</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a href="login.html" class="top-link" id="auth-link">
+        <span class="link-sub">Hello, Sign in</span>
+        <span class="link-main">Account &amp; Lists</span>
+      </a>
+      <a href="#" class="top-link">
+        <span class="link-sub">Returns</span>
+        <span class="link-main">&amp; Orders</span>
+      </a>
+      <a href="cart.html" class="cart-icon">
+        🛒 <span class="cart-num" id="cart-count">0</span>
+        <span class="link-main">Cart</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> &nbsp;›&nbsp;
+    <a href="index.html">Electronics</a> &nbsp;›&nbsp;
+    <span id="product-breadcrumb">Product</span>
+  </div>
+
+  <!-- PRODUCT PAGE -->
+  <div class="product-page">
+
+    <!-- LEFT: Image -->
+    <div class="product-image-box">
+      <img src="https://placehold.co/340x300/f5f5f5/333?text=📦+Product" alt="Product" id="product-img"/>
+    </div>
+
+    <!-- RIGHT: Info -->
+    <div class="product-info">
+      <div class="brand" id="product-brand">Brand</div>
+      <h1 id="product-name">Product Name</h1>
+      <div class="rating">⭐⭐⭐⭐⭐ <span style="color:#007185;font-size:13px">(2,341 ratings)</span></div>
+
+      <div class="price-section">
+        <div class="price-section" style="padding:0;box-shadow:none;background:none">
+          <span class="price" id="product-price">₹0</span>
+          <span class="original-price" id="product-original" style="margin-left:8px;color:#888;text-decoration:line-through"></span>
+          <span class="discount" id="product-discount" style="margin-left:6px;color:#cc0c39;font-weight:700"></span>
+        </div>
+        <p style="font-size:12px;color:#565959;margin-top:6px">Inclusive of all taxes</p>
+      </div>
+
+      <div class="delivery">✅ FREE Delivery by Tomorrow</div>
+      <div class="stock">In Stock</div>
+
+      <div class="features">
+        <h3>Key Features</h3>
+        <ul id="features-list">
+          <li>Loading features...</li>
+        </ul>
+      </div>
+
+      <button class="add-btn" id="add-btn" onclick="addToCartFromPage()">🛒 Add to Cart</button>
+      <button class="buy-btn" onclick="buyNow()">⚡ Buy Now</button>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-bottom">
+      <p>🛒 ShopCloud &copy; 2026 &nbsp;|&nbsp; Built on AWS &nbsp;|&nbsp; All rights reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    // Product data — later this will come from DynamoDB via Lambda API
+    const products = {
+      'Laptop Pro X':       { brand:'TechBrand',    price:65000, original:85000, discount:'23% off', img:'💻+Laptop',    features:['Intel Core i7 12th Gen','16GB DDR5 RAM','512GB NVMe SSD','Windows 11 Home','15.6" FHD IPS Display','Backlit Keyboard'] },
+      'SmartPhone Z':       { brand:'PhoneBrand',   price:25000, original:35000, discount:'28% off', img:'📱+Phone',     features:['108MP Triple Camera','5000mAh Fast Charging Battery','5G Connectivity','128GB Internal Storage','6.7" AMOLED Display','IP68 Water Resistant'] },
+      'Noise Pro Headphones':{ brand:'NoiseBrand',  price:8000,  original:12000, discount:'33% off', img:'🎧+Headphones',features:['Active Noise Cancellation','30 Hour Battery Life','Bluetooth 5.0','Foldable Design','Built-in Microphone','Multipoint Connection'] },
+      'SmartWatch S1':      { brand:'WearBrand',    price:12000, original:18000, discount:'33% off', img:'⌚+Watch',      features:['Health & Fitness Tracking','Built-in GPS','1.4" AMOLED Always-On Display','IP68 Waterproof','7 Day Battery Life','100+ Sport Modes'] },
+      'TabPro 11':          { brand:'TabBrand',     price:35000, original:45000, discount:'22% off', img:'📱+Tablet',    features:['11" AMOLED Display','Snapdragon 8 Gen 2','256GB Storage','Stylus Support','8000mAh Battery','Wi-Fi 6E'] },
+      'Bass Speaker X':     { brand:'SoundBrand',   price:4500,  original:7000,  discount:'35% off', img:'🔊+Speaker',   features:['360° Surround Sound','IPX7 Waterproof','20 Hour Playtime','Bluetooth 5.2','Built-in Microphone','USB-C Charging'] },
+      'USB-C Hub Pro':      { brand:'ConnectBrand', price:2500,  original:4000,  discount:'37% off', img:'🔌+USB+Hub',   features:['7-in-1 Connectivity','4K HDMI Output','100W Power Delivery','SD & MicroSD Card Reader','3x USB 3.0 Ports','Plug & Play'] },
+      'TWS Earbuds Pro':    { brand:'SoundBrand',   price:3999,  original:6999,  discount:'42% off', img:'🎵+Earbuds',   features:['Active Noise Cancellation','28 Hour Total Battery','IPX5 Sweat Resistant','Wireless Charging Case','10mm Drivers','Transparency Mode'] }
+    };
+
+    // Get product name from URL — e.g. product.html?name=Laptop Pro X
+    const params = new URLSearchParams(window.location.search);
+    const productName = params.get('name') || 'Laptop Pro X';
+    const product = products[productName] || products['Laptop Pro X'];
+
+    // Fill in the page
+    document.getElementById('product-name').textContent = productName;
+    document.getElementById('product-breadcrumb').textContent = productName;
+    document.getElementById('product-brand').textContent = product.brand;
+    document.getElementById('product-price').textContent = '₹' + product.price.toLocaleString();
+    document.getElementById('product-original').textContent = '₹' + product.original.toLocaleString();
+    document.getElementById('product-discount').textContent = product.discount;
+    document.getElementById('product-img').src = `https://placehold.co/340x300/f5f5f5/333?text=${product.img}`;
+    document.getElementById('product-img').alt = productName;
+    document.title = productName + ' - ShopCloud';
+
+    const featuresList = document.getElementById('features-list');
+    featuresList.innerHTML = '';
+    product.features.forEach(f => {
+      featuresList.innerHTML += `<li>${f}</li>`;
+    });
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      document.getElementById('cart-count').textContent = cart.length;
+    }
+
+    function addToCartFromPage() {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      cart.push({ name: productName, price: product.price });
+      localStorage.setItem('cart', JSON.stringify(cart));
+      const btn = document.getElementById('add-btn');
+      btn.textContent = '✅ Added to Cart!';
+      btn.style.background = '#28a745';
+      btn.style.color = 'white';
+      setTimeout(() => {
+        btn.textContent = '🛒 Add to Cart';
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 1500);
+      updateCartCount();
+    }
+
+    function buyNow() {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      cart.push({ name: productName, price: product.price });
+      localStorage.setItem('cart', JSON.stringify(cart));
+      window.location.href = 'cart.html';
+    }
+
+    updateCartCount();
+  </script>
+
+</body>
+</html>

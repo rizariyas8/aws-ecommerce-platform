@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout - ShopCloud</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .checkout-page {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      align-items: start;
+      flex: 1;
+    }
+    .checkout-left { display: flex; flex-direction: column; gap: 16px; }
+    .checkout-section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .section-num {
+      display: inline-block;
+      background: #131921;
+      color: white;
+      font-size: 13px;
+      font-weight: bold;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      margin-right: 8px;
+    }
+    .checkout-section h3 {
+      font-size: 16px;
+      color: #0f1111;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #0f1111;
+    }
+    input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+      padding: 9px 12px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+      width: 100%;
+      transition: border 0.2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #ff9900; box-shadow: 0 0 0 2px rgba(255,153,0,0.2); }
+    .payment-options { display: flex; flex-direction: column; gap: 10px; }
+    .payment-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border 0.2s;
+    }
+    .payment-option:hover, .payment-option.selected { border-color: #ff9900; background: #fffbf2; }
+    .payment-option input[type="radio"] { accent-color: #ff9900; width: 16px; height: 16px; }
+    .payment-option label { cursor: pointer; font-size: 14px; color: #0f1111; margin: 0; font-weight: 500; }
+    .payment-icon { font-size: 22px; }
+    .upi-field { margin-top: 10px; display: none; }
+    .upi-field.show { display: block; }
+    .order-summary-box {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 80px;
+    }
+    .order-summary-box h3 {
+      font-size: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #444;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+    .order-item span:first-child { flex: 1; }
+    .order-item span:last-child { font-weight: 600; color: #0f1111; white-space: nowrap; }
+    .order-divider { border: none; border-top: 1px solid #eee; margin: 12px 0; }
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 17px;
+      font-weight: bold;
+      color: #0f1111;
+      margin-bottom: 16px;
+    }
+    .place-order-btn {
+      background: #ff9900;
+      color: #131921;
+      border: none;
+      padding: 14px;
+      width: 100%;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .place-order-btn:hover { background: #e68900; }
+    .secure-badge {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      margin-top: 10px;
+    }
+    .empty-checkout {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 8px;
+    }
+    .success-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+    }
+    .success-overlay.show { display: flex; }
+    .success-box {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .success-icon { font-size: 64px; margin-bottom: 16px; }
+    .success-box h2 { font-size: 24px; color: #0f1111; margin-bottom: 8px; }
+    .success-box p { font-size: 14px; color: #565959; margin-bottom: 20px; line-height: 1.5; }
+    .order-id { background: #f5f5f5; border-radius: 6px; padding: 8px 16px; font-size: 13px; color: #444; margin-bottom: 20px; }
+    .back-home-btn {
+      background: #ff9900;
+      color: #131921;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 20px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .checkout-page { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="index.html" class="logo">🛒 ShopCloud</a>
+      <div class="search-bar">
+        <input type="text" placeholder="Search for products..."/>
+        <button class="search-btn">🔍</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a href="login.html" class="top-link" id="auth-link">
+        <span class="link-sub">Hello, Sign in</span>
+        <span class="link-main">Account &amp; Lists</span>
+      </a>
+      <a href="cart.html" class="cart-icon">
+        🛒 <span class="cart-num" id="cart-count">0</span>
+        <span class="link-main">Cart</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- CHECKOUT PAGE -->
+  <div class="checkout-page" id="checkout-page">
+
+    <!-- LEFT -->
+    <div class="checkout-left">
+
+      <!-- DELIVERY ADDRESS -->
+      <div class="checkout-section">
+        <h3><span class="section-num">1</span> Delivery Address</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" placeholder="Enter first name" id="firstName"/>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" placeholder="Enter last name" id="lastName"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" placeholder="Enter email address" id="email"/>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" placeholder="10-digit mobile number" id="phone"/>
+        </div>
+        <div class="form-group">
+          <label>Address Line 1</label>
+          <input type="text" placeholder="House no, Street name" id="address1"/>
+        </div>
+        <div class="form-group">
+          <label>Address Line 2 (Optional)</label>
+          <input type="text" placeholder="Area, Landmark" id="address2"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" placeholder="City" id="city"/>
+          </div>
+          <div class="form-group">
+            <label>State</label>
+            <select id="state">
+              <option value="">Select State</option>
+              <option>Andhra Pradesh</option>
+              <option>Delhi</option>
+              <option>Goa</option>
+              <option>Gujarat</option>
+              <option>Karnataka</option>
+              <option>Kerala</option>
+              <option>Maharashtra</option>
+              <option>Punjab</option>
+              <option>Rajasthan</option>
+              <option>Tamil Nadu</option>
+              <option>Telangana</option>
+              <option>Uttar Pradesh</option>
+              <option>West Bengal</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="max-width:200px">
+          <label>PIN Code</label>
+          <input type="text" placeholder="6-digit PIN" id="pincode" maxlength="6"/>
+        </div>
+      </div>
+
+      <!-- PAYMENT -->
+      <div class="checkout-section">
+        <h3><span class="section-num">2</span> Payment Method</h3>
+        <div class="payment-options">
+
+          <div class="payment-option selected" onclick="selectPayment(this, 'upi')">
+            <input type="radio" name="payment" value="upi" checked/>
+            <span class="payment-icon">📱</span>
+            <label>UPI (GPay, PhonePe, Paytm)</label>
+          </div>
+          <div class="upi-field show" id="upi-field">
+            <input type="text" placeholder="Enter UPI ID (e.g. name@gpay)" id="upi-id"/>
+          </div>
+
+          <div class="payment-option" onclick="selectPayment(this, 'card')">
+            <input type="radio" name="payment" value="card"/>
+            <span class="payment-icon">💳</span>
+            <label>Credit / Debit Card</label>
+          </div>
+
+          <div class="payment-option" onclick="selectPayment(this, 'netbanking')">
+            <input type="radio" name="payment" value="netbanking"/>
+            <span class="payment-icon">🏦</span>
+            <label>Net Banking</label>
+          </div>
+
+          <div class="payment-option" onclick="selectPayment(this, 'cod')">
+            <input type="radio" name="payment" value="cod"/>
+            <span class="payment-icon">💵</span>
+            <label>Cash on Delivery</label>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Order Summary -->
+    <div class="order-summary-box">
+      <h3>🧾 Order Summary</h3>
+      <div id="order-items-list"></div>
+      <hr class="order-divider"/>
+      <div class="order-item">
+        <span>Subtotal</span>
+        <span id="summary-subtotal">₹0</span>
+      </div>
+      <div class="order-item">
+        <span>Delivery</span>
+        <span style="color:#007600;font-weight:700">FREE</span>
+      </div>
+      <div class="order-item">
+        <span>Discount</span>
+        <span style="color:#cc0c39" id="summary-discount">-₹0</span>
+      </div>
+      <hr class="order-divider"/>
+      <div class="order-total">
+        <span>Total</span>
+        <span id="summary-total">₹0</span>
+      </div>
+      <button class="place-order-btn" onclick="placeOrder()">
+        Place Order →
+      </button>
+      <div class="secure-badge">🔒 Safe and Secure Payments</div>
+    </div>
+
+  </div>
+
+  <!-- SUCCESS OVERLAY -->
+  <div class="success-overlay" id="success-overlay">
+    <div class="success-box">
+      <div class="success-icon">🎉</div>
+      <h2>Order Placed Successfully!</h2>
+      <p>Thank you for shopping with ShopCloud!<br/>Your order is confirmed and will be delivered by tomorrow.</p>
+      <div class="order-id" id="order-id-display">Order ID: #SC2026000001</div>
+      <p style="font-size:13px;color:#007600;margin-bottom:20px">📧 Confirmation email will be sent shortly</p>
+      <button class="back-home-btn" onclick="goHome()">Continue Shopping</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-bottom">
+      <p>🛒 ShopCloud &copy; 2026 &nbsp;|&nbsp; Built on AWS &nbsp;|&nbsp; All rights reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      document.getElementById('cart-count').textContent = cart.length;
+    }
+
+    function loadOrderSummary() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const listEl = document.getElementById('order-items-list');
+
+      if (cart.length === 0) {
+        document.getElementById('checkout-page').innerHTML = `
+          <div class="empty-checkout" style="grid-column:1/-1">
+            <div style="font-size:48px;margin-bottom:16px">🛒</div>
+            <h3>Your cart is empty</h3>
+            <p style="margin:12px 0 20px;color:#565959">Add some items before checking out.</p>
+            <a href="index.html" class="continue-btn">Shop Now</a>
+          </div>`;
+        return;
+      }
+
+      let total = 0;
+      listEl.innerHTML = '';
+      cart.forEach(item => {
+        total += item.price;
+        listEl.innerHTML += `
+          <div class="order-item">
+            <span>${item.name}</span>
+            <span>₹${item.price.toLocaleString()}</span>
+          </div>`;
+      });
+
+      const discount = Math.round(total * 0.05);
+      const finalTotal = total - discount;
+
+      document.getElementById('summary-subtotal').textContent = '₹' + total.toLocaleString();
+      document.getElementById('summary-discount').textContent = '-₹' + discount.toLocaleString();
+      document.getElementById('summary-total').textContent = '₹' + finalTotal.toLocaleString();
+    }
+
+    function selectPayment(el, type) {
+      document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      el.querySelector('input[type="radio"]').checked = true;
+      document.getElementById('upi-field').classList.toggle('show', type === 'upi');
+    }
+
+    function placeOrder() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const address1 = document.getElementById('address1').value.trim();
+      const city = document.getElementById('city').value.trim();
+      const pincode = document.getElementById('pincode').value.trim();
+
+      if (!firstName || !email || !phone || !address1 || !city || !pincode) {
+        alert('Please fill in all required delivery details.');
+        return;
+      }
+
+      if (pincode.length !== 6) {
+        alert('Please enter a valid 6-digit PIN code.');
+        return;
+      }
+
+      // Generate random order ID
+      const orderId = '#SC' + Date.now().toString().slice(-8);
+      document.getElementById('order-id-display').textContent = 'Order ID: ' + orderId;
+
+      // Show success overlay
+      document.getElementById('success-overlay').classList.add('show');
+
+      // Clear cart
+      localStorage.removeItem('cart');
+    }
+
+    function goHome() {
+      window.location.href = 'index.html';
+    }
+
+    updateCartCount();
+    loadOrderSummary();
+  </script>
+
+</body>
+</html>
