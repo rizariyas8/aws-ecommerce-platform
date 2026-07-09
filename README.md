@@ -3,7 +3,7 @@
 A fully serverless e-commerce platform built on AWS.
 
 ## Live Demo
-[ShopCloud Website](http://shopcloud-frontend-2026.s3-website.ap-south-1.amazonaws.com)
+[ShopCloud Website](http://shopcloud-riza-demo.s3-website.ap-south-1.amazonaws.com/index.html)
 
 ## AWS Services Used (10+)
 - **S3** — Frontend static website hosting
