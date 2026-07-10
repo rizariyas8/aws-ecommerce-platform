@@ -1,4 +1,10 @@
-# AWS E-Commerce Platform — ShopCloud
+# 🛒 ShopCloud — AWS Serverless E-Commerce Platform
+
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![AWS](https://img.shields.io/badge/AWS-10%2B%20Services-orange?logo=amazon-aws)
+![Status](https://img.shields.io/badge/status-live-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Services](https://img.shields.io/badge/serverless-Lambda%20%7C%20DynamoDB%20%7C%20SQS-yellow)
 
 A fully serverless e-commerce platform built on AWS.
 
@@ -36,3 +42,4 @@ Order flow: Checkout → Lambda → SQS → Process Lambda → SES email
 - cart.html — Shopping cart
 - checkout.html — Order placement with real API
 - login.html — Cognito authentication
+
