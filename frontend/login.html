@@ -409,18 +409,30 @@
 
       cognitoUser.authenticateUser(authDetails, {
         onSuccess: (result) => {
-          // Save token and user info
-          const token = result.getIdToken().getJwtToken();
-          const payload = result.getIdToken().decodePayload();
-          localStorage.setItem('shopcloud_token', token);
-          localStorage.setItem('shopcloud_user', JSON.stringify({
+        const token = result.getIdToken().getJwtToken();
+        const payload = result.getIdToken().decodePayload();
+
+        // Get user groups from token
+        const groups = payload['cognito:groups'] || [];
+
+        // Save user info including role
+        localStorage.setItem('shopcloud_token', token);
+        localStorage.setItem('shopcloud_user', JSON.stringify({
             name: payload.name || email,
-            email: payload.email
-          }));
-          showMessage('signin-message', 'success', '✅ Signed in successfully! Redirecting...');
-          setTimeout(() => {
+            email: payload.email,
+            role: groups.includes('Sellers') ? 'seller' : 'buyer'
+        }));
+
+        showMessage('signin-message', 'success', '✅ Signed in successfully! Redirecting...');
+
+        // Redirect based on role
+        setTimeout(() => {
+            if (groups.includes('Sellers')) {
+            window.location.href = 'seller.html';
+            } else {
             window.location.href = 'index.html';
-          }, 1000);
+            }
+        }, 1000);
         },
         onFailure: (err) => {
           btn.disabled = false;
