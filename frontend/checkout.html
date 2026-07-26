@@ -50,6 +50,7 @@
       font-size: 14px; outline: none; width: 100%; transition: border 0.2s;
     }
     input:focus, select:focus { border-color: #ff9900; box-shadow: 0 0 0 2px rgba(255,153,0,0.2); }
+    input[readonly] { background: #f5f5f5; color: #565959; cursor: not-allowed; }
     .payment-options { display: flex; flex-direction: column; gap: 10px; }
     .payment-option {
       display: flex; align-items: center; gap: 12px;
@@ -124,7 +125,7 @@
       </div>
     </div>
     <div class="topbar-right">
-      <a href="login.html" class="top-link">
+      <a href="login.html" class="top-link" id="auth-link">
         <span class="link-sub">Hello, Sign in</span>
         <span class="link-main">Account &amp; Lists</span>
       </a>
@@ -262,14 +263,76 @@
     </div>
   </footer>
 
+  <!-- Cognito SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+
   <script>
     const API_URL = 'https://74koa1oin1.execute-api.ap-south-1.amazonaws.com';
 
+    // ===== COGNITO SETUP =====
+    const poolData = {
+      UserPoolId: 'ap-south-1_zWnAt9zu0',
+      ClientId: '795g14phrivadirpbnoefu8j9c'
+    };
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    const currentUser = userPool.getCurrentUser();
+
+    // ===== CHECK LOGIN — redirect if not logged in =====
+    if (!currentUser) {
+      alert('Please sign in to place an order!');
+      window.location.href = 'login.html';
+    } else {
+      // User is logged in — get session and auto-fill form
+      currentUser.getSession((err, session) => {
+        if (!err && session.isValid()) {
+          const user = JSON.parse(localStorage.getItem('shopcloud_user') || '{}');
+
+          // Update navbar
+          const link = document.getElementById('auth-link');
+          if (link && user.name) {
+            link.querySelector('.link-sub').textContent = 'Hello, ' + user.name.split(' ')[0];
+            link.querySelector('.link-main').textContent = 'Account & Lists';
+            link.href = '#';
+            link.onclick = function() {
+              if (confirm('Do you want to sign out?')) {
+                currentUser.signOut();
+                localStorage.removeItem('shopcloud_token');
+                localStorage.removeItem('shopcloud_user');
+                window.location.href = 'login.html';
+              }
+            };
+          }
+
+          // Auto-fill name from Cognito
+          if (user.name) {
+            const nameParts = user.name.split(' ');
+            document.getElementById('firstName').value = nameParts[0] || '';
+            if (nameParts[1]) {
+              document.getElementById('lastName').value = nameParts.slice(1).join(' ');
+            }
+          }
+
+          // Auto-fill email and make it read-only
+          if (user.email) {
+            document.getElementById('email').value = user.email;
+            document.getElementById('email').readOnly = true;
+          }
+
+        } else {
+          // Session expired — redirect to login
+          alert('Your session has expired. Please sign in again.');
+          window.location.href = 'login.html';
+        }
+      });
+    }
+
+    // ===== CART COUNT =====
     function updateCartCount() {
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
       document.getElementById('cart-count').textContent = cart.length;
     }
 
+    // ===== LOAD ORDER SUMMARY =====
     function loadOrderSummary() {
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
       const listEl = document.getElementById('order-items-list');
@@ -280,7 +343,7 @@
             <div style="font-size:48px;margin-bottom:16px">🛒</div>
             <h3>Your cart is empty</h3>
             <p style="margin:12px 0 20px;color:#565959">Add some items before checking out.</p>
-            <a href="index.html" class="continue-btn">Shop Now</a>
+            <a href="index.html" style="background:#ff9900;color:#131921;padding:12px 28px;border-radius:20px;text-decoration:none;font-weight:bold;font-size:15px;">Shop Now</a>
           </div>`;
         return;
       }
@@ -304,14 +367,15 @@
       document.getElementById('summary-total').textContent = '₹' + finalTotal.toLocaleString();
     }
 
+    // ===== PAYMENT SELECTION =====
     function selectPayment(el) {
       document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
       el.classList.add('selected');
       el.querySelector('input[type="radio"]').checked = true;
     }
 
+    // ===== PLACE ORDER =====
     async function placeOrder() {
-      // Validate fields
       const firstName = document.getElementById('firstName').value.trim();
       const email = document.getElementById('email').value.trim();
       const phone = document.getElementById('phone').value.trim();
@@ -339,22 +403,18 @@
         return;
       }
 
-      // Show loading state
       const btn = document.getElementById('place-order-btn');
       btn.disabled = true;
       btn.innerHTML = '<span class="loading-spinner"></span> Placing Order...';
 
-      // Calculate total
       const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
       const discount = Math.round(subtotal * 0.05);
       const total = subtotal - discount;
 
-      // Build full address
       const lastName = document.getElementById('lastName').value.trim();
       const address2 = document.getElementById('address2').value.trim();
       const fullAddress = `${address1}${address2 ? ', ' + address2 : ''}, ${city}, ${state} - ${pincode}`;
 
-      // Call real API
       try {
         const response = await fetch(API_URL + '/orders', {
           method: 'POST',
@@ -372,7 +432,6 @@
         const result = await response.json();
 
         if (result.success) {
-          // Show success
           document.getElementById('order-id-display').textContent = 'Order ID: ' + result.orderId;
           document.getElementById('success-overlay').classList.add('show');
           localStorage.removeItem('cart');

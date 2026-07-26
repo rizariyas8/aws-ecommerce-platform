@@ -277,23 +277,20 @@
       }
     }
 
-    function addToCart() {
-      const product = window.currentProduct;
-      if (!product) return;
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      cart.push({ name: product.name, price: Number(product.price) });
-      localStorage.setItem('cart', JSON.stringify(cart));
-      const btn = document.getElementById('add-btn');
-      btn.textContent = '✅ Added to Cart!';
-      btn.style.background = '#28a745';
-      btn.style.color = 'white';
-      setTimeout(() => {
-        btn.textContent = '🛒 Add to Cart';
-        btn.style.background = '';
-        btn.style.color = '';
-      }, 1500);
-      updateCartCount();
-    }
+    function addToCart(name, price, image, btn) {
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    cart.push({ name, price, image });
+    localStorage.setItem('cart', JSON.stringify(cart));
+    btn.textContent = '✅ Added!';
+    btn.style.background = '#28a745';
+    btn.style.color = 'white';
+    setTimeout(() => {
+      btn.textContent = '🛒 Add to Cart';
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1500);
+    updateCartCount();
+  }
 
     function buyNow() {
       const product = window.currentProduct;

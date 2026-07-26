@@ -52,7 +52,6 @@
         Shop Now →
       </button>
     </div>
-    <div class="hero-emoji">🖥️</div>
   </div>
 
   <!-- DEALS STRIP -->
@@ -113,20 +112,20 @@
       document.getElementById('cart-count').textContent = cart.length;
     }
 
-    function addToCart(name, price, btn) {
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      cart.push({ name, price });
-      localStorage.setItem('cart', JSON.stringify(cart));
-      btn.textContent = '✅ Added!';
-      btn.style.background = '#28a745';
-      btn.style.color = 'white';
-      setTimeout(() => {
-        btn.textContent = '🛒 Add to Cart';
-        btn.style.background = '';
-        btn.style.color = '';
-      }, 1500);
-      updateCartCount();
-    }
+    function addToCart(name, price, image, btn) {
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    cart.push({ name, price, image });
+    localStorage.setItem('cart', JSON.stringify(cart));
+    btn.textContent = '✅ Added!';
+    btn.style.background = '#28a745';
+    btn.style.color = 'white';
+    setTimeout(() => {
+      btn.textContent = '🛒 Add to Cart';
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1500);
+    updateCartCount();
+  }
 
     // ===== SEARCH =====
     function filterProducts() {
@@ -203,7 +202,7 @@
 
           // Out of stock button vs normal button
           const cartButton = product.inStock
-            ? `<button onclick="addToCart('${product.name}', ${product.price}, this)">🛒 Add to Cart</button>`
+            ? `<button onclick="addToCart('${product.name}', ${product.price}, '${product.image}', this)">🛒 Add to Cart</button>`
             : `<button disabled style="background:#ccc;color:#666;cursor:not-allowed;border-radius:20px;padding:10px;width:100%;border:none;font-size:13px;font-weight:600;">❌ Out of Stock</button>`;
 
           // Out of stock overlay on card
