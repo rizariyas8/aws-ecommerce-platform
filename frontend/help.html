@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Help Centre - ShopCloud</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+body{
+    background:#eaeded;
+    font-family:Arial,sans-serif;
+}
+
+.help-container{
+    max-width:1200px;
+    margin:35px auto;
+    padding:0 20px;
+}
+
+.help-banner{
+    background:#232f3e;
+    color:white;
+    text-align:center;
+    padding:50px 20px;
+    border-radius:8px;
+    margin-bottom:35px;
+}
+
+.help-banner h1{
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+.help-banner p{
+    color:#ddd;
+    font-size:17px;
+}
+
+.help-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+    margin-bottom:40px;
+}
+
+.help-card{
+    background:white;
+    border-radius:8px;
+    padding:25px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.help-card:hover{
+    transform:translateY(-5px);
+}
+
+.help-card h3{
+    margin-bottom:12px;
+    color:#131921;
+}
+
+.help-card p{
+    color:#555;
+    line-height:1.6;
+    margin-bottom:18px;
+}
+
+.help-card a{
+    text-decoration:none;
+    color:#007185;
+    font-weight:bold;
+}
+
+.help-card a:hover{
+    text-decoration:underline;
+}
+
+.faq{
+    background:white;
+    padding:30px;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.faq h2{
+    margin-bottom:20px;
+}
+
+details{
+    border-bottom:1px solid #ddd;
+    padding:15px 0;
+}
+
+summary{
+    cursor:pointer;
+    font-weight:bold;
+    color:#131921;
+}
+
+details p{
+    margin-top:10px;
+    color:#555;
+    line-height:1.6;
+}
+
+.project-note{
+    margin-top:40px;
+    background:white;
+    padding:25px;
+    border-left:5px solid #ff9900;
+    border-radius:6px;
+    color:#444;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.contact-box{
+    margin-top:35px;
+    text-align:center;
+    background:#ff9900;
+    padding:35px;
+    border-radius:8px;
+}
+
+.contact-box h2{
+    color:#131921;
+    margin-bottom:10px;
+}
+
+.contact-box p{
+    margin-bottom:20px;
+}
+
+.contact-btn{
+    background:#131921;
+    color:white;
+    padding:13px 28px;
+    border:none;
+    border-radius:25px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.contact-btn:hover{
+    background:#37475a;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ================= TOP BAR ================= -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="index.html" class="logo">🛒 ShopCloud</a>
+    </div>
+    <div class="topbar-right">
+      <a href="login.html" class="top-link" id="auth-link">
+        <span class="link-sub">Hello, Sign in</span>
+        <span class="link-main">Account &amp; Lists</span>
+      </a>
+      <a href="index.html" class="top-link">
+        <span class="link-sub">Back</span>
+        <span class="link-main">To Shopping</span>
+      </a>
+      <a href="cart.html" class="cart-icon">
+        🛒 <span class="cart-num" id="cart-count">0</span>
+        <span class="link-main">Cart</span>
+      </a>
+    </div>
+  </div>
+
+<!-- ================= HELP CONTENT ================= -->
+
+<div class="help-container">
+
+<div class="help-banner">
+
+<h1>Help Centre</h1>
+
+<p>Need assistance? Find answers to common questions about ShopCloud.</p>
+
+</div>
+
+<div class="help-grid">
+
+<div class="help-card">
+
+<h3>📦 Your Orders</h3>
+
+<p>View your previous purchases and check your order status.</p>
+
+<a href="order.html">Go to Orders →</a>
+
+</div>
+
+<div class="help-card">
+
+<h3>🛒 Shopping</h3>
+
+<p>Browse products, add them to your cart and place orders securely.</p>
+
+<a href="index.html">Continue Shopping →</a>
+
+</div>
+
+<div class="help-card">
+
+<h3>🔐 Your Account</h3>
+
+<p>Sign in securely using Amazon Cognito authentication.</p>
+
+<a href="login.html">Sign In →</a>
+
+</div>
+
+<div class="help-card">
+
+<h3>💬 Contact Support</h3>
+
+<p>Need more help? Click below for information about this project.</p>
+
+<a href="#" onclick="showSupportMessage(); return false;">Contact Support →</a>
+
+</div>
+
+</div>
+
+<div class="faq">
+
+<h2>Frequently Asked Questions</h2>
+
+<details>
+
+<summary>How do I place an order?</summary>
+
+<p>Select a product, click <strong>Add to Cart</strong>, review your cart, and proceed to checkout.</p>
+
+</details>
+
+<details>
+
+<summary>How do I view my orders?</summary>
+
+<p>Open the Orders page from the navigation bar to view your purchase history.</p>
+
+</details>
+
+<details>
+
+<summary>Can I remove products from my cart?</summary>
+
+<p>Yes. Open your cart and click the Remove button beside any item.</p>
+
+</details>
+
+<details>
+
+<summary>Is my login secure?</summary>
+
+<p>Yes. User authentication is handled using Amazon Cognito.</p>
+
+</details>
+
+</div>
+
+<div class="contact-box">
+
+<h2>Still Need Help?</h2>
+
+<p>Click below to learn more about this academic project.</p>
+
+<button class="contact-btn" onclick="showSupportMessage()">
+
+Contact Support
+
+</button>
+
+</div>
+
+<div class="project-note">
+
+<h3>📘 Academic Project Notice</h3>
+
+<p>
+
+<strong>ShopCloud</strong> is an academic cloud computing project developed for educational purposes.
+
+This website demonstrates cloud technologies including AWS services such as Amazon Cognito,
+API Gateway, Lambda, DynamoDB and S3.
+
+Customer support and commercial services are not available because this is a demonstration project.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+    <div class="footer-grid">
+      <div>
+        <h4>Get to Know Us</h4>
+        <a href="#">About ShopCloud</a>
+        <a href="#">Careers</a>
+        <a href="#">Press Releases</a>
+        <a href="#">Blog</a>
+      </div>
+      <div>
+        <h4>Make Money With Us</h4>
+        <a href="#">Sell on ShopCloud</a>
+        <a href="#">Become an Affiliate</a>
+        <a href="#">Advertise Your Products</a>
+      </div>
+      <div>
+        <h4>Let Us Help You</h4>
+        <a href="#">Your Account</a>
+        <a href="order.html">Your Orders</a>
+        <a href="#">Returns Centre</a>
+        <a href="#">Help</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>🛒 ShopCloud &copy; 2026 &nbsp;|&nbsp; Built on AWS &nbsp;|&nbsp; All rights reserved</p>
+    </div>
+  </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+
+<script>
+function showSupportMessage() {
+    alert(
+        "Thank you for visiting ShopCloud!\n\n" +
+        "This website is an academic AWS cloud computing project developed for educational purposes.\n\n" +
+        "Customer support is not available because this is a demonstration application."
+    );
+}
+
+// ===== Cognito Login Display =====
+const poolData = {
+    UserPoolId: 'ap-south-1_zWnAt9zu0',
+    ClientId: '795g14phrivadirpbnoefu8j9c'
+};
+
+const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+const currentUser = userPool.getCurrentUser();
+
+if (currentUser) {
+    currentUser.getSession((err, session) => {
+        if (!err && session.isValid()) {
+
+            const user = JSON.parse(localStorage.getItem('shopcloud_user') || '{}');
+
+            const link = document.getElementById('auth-link');
+
+            if (link && user.name) {
+
+                link.querySelector('.link-sub').textContent =
+                    "Hello, " + user.name.split(" ")[0];
+
+                link.querySelector('.link-main').textContent =
+                    "Account & Lists";
+
+                link.href = "#";
+
+                link.onclick = function () {
+
+                    if (confirm("Do you want to sign out?")) {
+
+                        currentUser.signOut();
+
+                        localStorage.removeItem("shopcloud_user");
+                        localStorage.removeItem("shopcloud_token");
+
+                        window.location.reload();
+                    }
+
+                    return false;
+                };
+
+            }
+        }
+    });
+}
+function showSupportMessage(){
+
+    alert(
+    "Thank you for visiting ShopCloud!\n\n" +
+
+    "This website is an academic AWS cloud computing project developed for educational purposes.\n\n" +
+
+    "Customer support is not available because this is a demonstration application."
+
+    );
+
+}
+
+</script>
+
+</body>
+</html>
